@@ -1,0 +1,14 @@
+
+{% autoescape off %}
+
+Dear {{user.first_name | capfirst}},
+
+Please click on below link to confirm your registration for JV Store account.
+
+http://{{domain}}{% url 'activate' uidb64=uid token=token %}
+
+
+Sincerely,
+JV-STORE Team
+
+{% endautoescape %}

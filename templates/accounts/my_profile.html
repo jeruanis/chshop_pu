@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content py-3 bg footer-height">
+
+	{% include 'includes/alerts.html' %}
+	<div class="row">
+
+	{% include 'includes/dashboard_sidebar.html' %}
+
+	<main class="col-md-10">
+		<article class="card">
+		<div class="card-body">
+
+      <div class="row gutters-sm">
+            <div class="col-md-4 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex flex-column align-items-center text-center">
+                    <img src="{{info.profile_pic.url}}" alt="profile pic" class="rounded-circle" style="width:150px;height:150px">
+                    <div class="mt-3">
+                      <h4>{{info.username}}</h4>
+											<p class="text-muted font-size-sm">{{info.group }}</p>
+                      <p class="text-secondary mb-1">{{info.profession | title}}</p>
+                      <p class="text-muted font-size-sm">{{info.address }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-md-8">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Full Name</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{info.full_name | title}}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Email</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{info.email}}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Phone</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{info.phone}}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Address</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{info.address }}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Profession</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{info.profession | title}}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+		</div> <!-- card-body .// -->
+		</article> <!-- order-group.// -->
+	</main>
+</div> <!-- row.// -->
+
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}

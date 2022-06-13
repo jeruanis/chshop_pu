@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load currency %}
+{% load humanize %}
+{% block content %}
+
+<section class="section-content py-3 bg footer-height">
+
+	{% include 'includes/alerts.html' %}
+	<div class="row">
+
+	{% include 'includes/dashboard_sidebar.html' %}
+
+	<main class="col-md-10">
+		<article class="card">
+		 <div class="head-container">
+			 <div class="items">Total: {{count}} Item{{count | pluralize}}</div>
+			 <div class="items">Pending: {{pending}}</div>
+			 <div class="items">Sent: {{sent}}</div>
+			 <div class="items">Cancelled: {{cancel}}</div>
+			 {% if user.is_admin %}
+			 		<div class="items">For Payment: {{for_payment_count}}</div>
+			 {% endif %}
+		 </div>
+
+		 <div class="footer-grid mb-4">
+			 <div class="pt-4 item-footer">
+				 {% if user.is_admin %}
+				 <p>For monitoring only, to display functionality and status. Buttons are disabled except for payment. Activated for sellers.</p>
+
+				 {% elif authorised %}
+					 <p>This shows your personal buys in the store as customer.</p>
+				 {% endif %}
+			 </div>
+			 <form method="GET" class="bg-light item-footer">
+					<input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
+					<div class="d-flex justify-content-start m-2 pl-0 ml-0">
+						{% if user.is_admin %}
+						 {{order_filter.form}}
+						{% else %}
+						<label for="id_status">Status</label>
+						 <select id="id_for_status" name="status">
+							 <option selected="">------</option>
+							 <option value="Pending">Pending</option>
+							 <option Value="Sent">Sent</option>
+							 <option Value="Cancelled">Cancelled</option>
+						 </select>
+						{% endif %}
+					 <button class="btn btn-sm btn-warning ml-2" type="submit" style="height:36px">Search</button>
+					</div>
+			 </form>
+			 </div>
+
+			 <script type="text/javascript">
+				 $(function(){
+					 $('label').addClass('px-2');
+					 $('select').addClass('form-control');
+				 })
+			 </script>
+
+		<div class="px-3 pb-3 overflow-auto">
+			{% if not count %}
+			<h3 class="text-center">You do not have existing orders.</h3>
+			<br>
+			<div class="text-center">
+				<a href="{% url 'store' %}" class="btn btn-warning">Check the Store for Items that you might like.</a>
+			</div>
+			{% else %}
+				<table class="table table-md">
+					<thead>
+						<tr>
+							<th scope="col">Transaction Detail</th>
+							<th scope="col">Qty</th>
+							{% if user.is_admin %}
+ 							 <th scope="col">Store Name</th>
+							{% else %}
+							<th scope="col">Ordered</th>
+							{% endif %}
+
+							<th scope="col">Total Price</th>
+							<th scope="col">Status</th>
+							{% if user.is_admin %}
+								<th scope="col">Update</th>
+								<td scope="col">Not Clickable</td>
+								<td scope="col">Payment Request</td>
+							{% else %}
+							<th scope="col">Action</th>
+							{% endif %}
+							<th scope="col"></th>
+						</tr>
+					 </thead>
+					<tbody>
+						{% if user.is_admin %}
+							{% if currency == 'PHP' %}
+								<span class="b text-muted">Total amount to pay:</span> <span class="pl-1 text-warning b">{{total_amount | currency:currency  | intcomma }}</span> <span class="pl-1 text-success b">{{currency}}</span>
+							{% else %}
+								<span class="b text-muted">Total amount to pay:</span> <span class="pl-1 text-warning b">{{total_amount | currency:currency  | intcomma }}</span> <span class="pl-1 text-success b">{{currency}}</span>
+							{% endif %}
+						{% endif %}
+
+						{% for order in orders  %}
+						<tr id="tr{{order.id}}">
+							<td><a href="{% url 'order_detail' order.order.order_number %}">{{ order.payment}}</a><span class="d-block">{{order.user}}</span><span class="d-block">{{ order}}</span>
+						 {% if user.is_admin %}
+							 <span class="d-block">{{ order.updated_at}}</span>
+						 {% endif %}
+							 </td>
+							 <td>{{order.quantity}}</td>
+							{% if user.is_admin %}
+							 <td>
+								 <span class="d-block">{{order.product.added_by}}</span>
+									<span class="d-block">{{order.product.added_by.username | capfirst}} Store</span>
+							 </td>
+							{% else %}
+								<td>{{ order.updated_at}}</td>
+							{% endif %}
+
+							 <td class="text-success b"> <span class="pr-1">{{order.order.currency}}</span> {{ order.total_price |currency:order.order.currency | intcomma }}</td>
+
+							 {% if user.is_admin %}
+									 <td>{{ order.status }}</td>
+							 {% else %}
+								 {% if order.status == 'PAID' %}
+									<td>Thank you</td>
+								 {% else %}
+								    <td>{{ order.status }}</td>
+								 {% endif %}
+							 {% endif %}
+
+							 {% if user.is_admin %}
+									 {% if order.status == 'Sent' and order.recieved == True or order.deleted == True %}
+										 <form id="ad{{order.id}}">
+											<td>
+												<input type="hidden" name="pay" value="12345theone">
+												<button style="outline-width: 0px !important" type="submit" id="subm{{order.id}}" class="btn btn-sm btn-success">Waiting for Payment</button>
+											</td>
+										 </form>
+										 <script type="text/javascript">
+												$(function(){
+													$('#ad{{order.id}}').on('submit', function(event){
+														var formData = new FormData($('#ad{{order.id}}')[0]);
+														formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+														formData.append('ops', '{{order.product.slug}}');
+														formData.append('order_id', '{{order.id}}');
+														$.ajax({
+															type: "POST",
+															url: "{% url 'paySeller' order.order.order_number %}",
+															data:formData,
+															cache: false,
+															contentType: false,
+															processData: false,
+															beforeSend:function(){
+																$('#ad{{order.id}}').css("opacity", "0.3");
+															},
+															success:function(data, textStatus){
+																$('#ad{{order.id}}').css("opacity", "1");
+																$('#subm{{order.id}}').html('<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#008000" style=""><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>');
+																$('#subm{{order.id}}').removeClass('btn-success');
+																$('#subm{{order.id}}').addClass('border-0', 'w-100');
+																$('#subm{{order.id}}').addClass('w-100');
+																$('#subm{{order.id}}').attr('disabled', 'disabled');
+															}
+														});
+														 event.preventDefault();
+													});
+												});
+											 </script>
+									 {% else %}
+										 <td>
+                      <a href="#"><button class="btn btn-sm btn-info"  disabled>Update</button></a>
+										 </td>
+									 {% endif %}
+
+                   {% if order.status == 'Sent' or order.status == 'Customer deleted item' %}
+											 {% if order.recieved == True %}
+												 <td>
+														<button type="button" class="btn btn-sm btn-success" title="item confirmed received" disabled>Recieved confirmed</button>
+												 </td>
+												{% else %}
+													<td>
+														<button type="button" class="btn btn-sm btn-danger" title="item not yet acknowledged" disabled>Recieved not yet confirmed</button>
+													</td>
+											 {% endif %}
+										 {% endif %}
+										 {% if order.request_payment and order.recieved %}
+                        <td>
+                           <button disabled type="button" class="btn btn-sm btn-danger">Seller manual confirmed</button>
+												</td>
+										{% endif%}
+
+								{% else %}
+									{% if order.status == 'Sent' and order.recieved == False %}
+									 <form action="{% url 'item_recieved' order.order.order_number %}?ops={{order.product.slug}}" method='POST'>
+										 {% csrf_token %}
+								      <td>
+												<input type="hidden" name="recieved" value="1"><button type="submit" class="btn btn-sm btn-danger"  title="Click to confirm received">Recieved</button>
+											</td>
+										</form>
+
+										{% elif order.recieved == True and order.status != 'Pending' %}
+										<form id="delcus{{order.id}}">
+										 <td>
+											 <input type="hidden" name="deleted" value="deleted">
+											 <button type="submit" style="outline-width: 0px !important"  class="btn btn-sm btn-danger" title="Delete this item?" id="subcus{{order.id}}">Delete item</button>
+										 </td>
+											</form>
+											<script type="text/javascript">
+											 $(function(){
+
+												 $('#delcus{{order.id}}').on('submit', function(event){
+													 var formData = new FormData($('#delcus{{order.id}}')[0]);
+													 formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+													 formData.append('ops', '{{order.product.slug}}');
+													 formData.append('order_id', '{{order.id}}');
+													 $.ajax({
+														 type: "POST",
+														 url: "{% url 'deleted_order' order.order.order_number %}",
+														 data:formData,
+														 cache: false,
+														 contentType: false,
+														 processData: false,
+														 beforeSend:function(){
+															 $('#delcus{{order.id}}').css("opacity", "0.3");
+														 },
+														 success:function(data, textStatus){
+															 $("#tr{{order.id}}").fadeOut();
+														 }
+													 });
+														event.preventDefault();
+												 });
+											 });
+
+											</script>
+										{% elif order.status == 'Done Refund' or order.status == 'PAID' %}
+										 <form action="{% url 'deleted_order' order.order.order_number %}?opsref={{order.product.slug}}&order_id={{order.id}}" method="POST">
+											 {% csrf_token %}
+												<td>
+													<input type="hidden" name="deleted" value="refunded">
+													<button type="submit" class="btn btn-sm btn-danger" title="Delete this item?">Delete item</button>
+												</td>
+										 </form>
+										{% else %}
+										    <td></td>
+									 	{% endif %}
+
+									{% if order.status == 'Sent' and order.recieved == True %}
+										 <td>
+												<button disabled type="button" class="btn btn-sm btn-success">Recieved confirmed</button>
+										 </td>
+								 {% elif order.status == 'Cancelled' %}
+									   <td>
+                      Payment to refund
+										 </td>
+							 		{% endif %}
+
+							 {% endif %}
+
+						 </tr>
+						{% endfor %}
+
+					</tbody>
+				</table>
+			{% endif %}
+		</div>
+
+		</article>
+	</main>
+</div>
+</section>
+
+{% endblock %}

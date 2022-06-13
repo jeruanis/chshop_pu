@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="section-content py-3 bg footer-height">
+
+	{% include 'includes/alerts.html' %}
+	<div class="row">
+
+	{% include 'includes/dashboard_sidebar.html' %}
+
+	<main class="col-md-10">
+		<article class="card">
+		<div class="card-body">
+   <h5 class="d-inline-block">Product edit page:</h5>
+	 {% if owner %}
+    <div class="float-right mb-2">
+			<a href="{% url 'delete_product' product_slug %}"><span class="btn btn-sm btn-danger">Delete this product</span></a>
+			<a href="{% url 'prodVariation' product_info.id %}"><span class="btn btn-sm btn-danger">Variation</span></a>
+		</div>
+		{% endif %}
+
+   <form style="clear:right" action="{% url 'update_product' product_info.slug %}" method="POST" enctype="multipart/form-data">
+     {% csrf_token %}
+      <div class="row gutters-sm">
+            <div class="col-md-4 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex flex-column align-items-center text-center" id="id_image_container">
+                    <div class="mt-3">
+												<div class="middle" id="id_middle_container">
+												{{ formset.management_form }}
+												  {{productImage.errors}}
+												  {{productImage.as_p }}
+													{% for form in formset %}
+													      {{form}}
+													   {% endfor %}
+														<h6 class="mt-3">Product Images</h6>
+												</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-md-8">
+              <div class="card mb-3">
+                <div class="card-body">
+
+									<div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Store Name</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{info | title}} Store
+                    </div>
+                  </div>
+                  <hr>
+
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Product Name</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{form.product_name}}
+                    </div>
+                  </div>
+									<hr>
+
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Description</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{form.description}}
+                    </div>
+                  </div>
+                  <hr>
+									<div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Price</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{form.price}}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Stock</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{form.stock}}
+                    </div>
+                  </div>
+                  <hr>
+									<div class="row">
+										<div class="col-sm-3">
+											<h6 class="mb-0">Category</h6>
+										</div>
+										<div class="col-sm-9 text-secondary">
+											{{form.category}}
+										</div>
+									</div>
+									<hr>
+									<div class="row">
+										<div class="col-sm-3">
+											<h6 class="mb-0">Digital Product</h6>
+										</div>
+										<div class="col-sm-9 text-secondary">
+											{{form.is_digital}}
+										</div>
+									</div>
+									<hr>
+                  <div class="form-group">
+        			        <button type="submit" class="btn btn-warning btn-block" id="apply_changes"> Update </button>
+        			    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+     </form>
+		</div>
+		</article>
+	</main>
+</div>
+</section>
+<script>
+	// for digital prod
+	$(function(){
+		$('li').css({'list-style':'none'})
+	})
+</script>
+
+{% endblock %}

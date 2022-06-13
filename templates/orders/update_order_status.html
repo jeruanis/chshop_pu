@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!--this html is the receiver of the desired url -->
+<center class="py-5 footer-height">
+  <div class="container" style="width:600px">
+    <div style="width:600px">
+      <div class="card">
+        <h5 class="card-header">Update Status</h5>
+        <div class="card-body">
+          <!-- <h5 class="card-title">Item: {{product}}</h5> -->
+          <p class="card-text">Tranaction #: {{transID}}</p>
+
+          <!-- not using the django form to exclude some options for other users -->
+          <form action="" method="POST">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
+              <label for="id_status">Status:</label>
+              <select name="status" class="form-control" style="width:200px" id="id_status">
+                {% for status in form %}
+                  <option value="{{status.value}}">{{status.value}}</option>
+                {% endfor %}
+                <option value="Pending">Pending</option>
+                <option value="Sent">Sent</option>
+                <option value="Cancelled">Cencelled</option>
+              </select>
+              <hr>
+              <a class="btn btn-sm-block btn-warning" href="/accounts/my_store_order/">Cancel</a>
+              <input class="btn btn-sm-block btn-info" value="Submit" type="submit" name="Submit">
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</center>
+
+
+{% endblock %}

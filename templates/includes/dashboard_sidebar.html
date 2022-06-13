@@ -1,0 +1,32 @@
+<aside class="col-md-2">
+  <!--   SIDEBAR   -->
+  <ul class="list-group">
+    <a class="list-group-item {% if '/accounts/' == request.path %}active{% endif %}" href="{% url 'dashboard' %}"> Dashboard </a>
+
+    {% if user.is_admin %}
+    <a class="list-group-item {% if '/dashboard_single/' in request.path %}active{% endif %}" href="{% url 'dashboard_single' %}"> Single Items </a>
+    {% endif %}
+
+    <a class="list-group-item {% if '/my_profile/' in request.path %}active{% endif %}" href="{% url 'my_profile' %}"> My Profile </a>
+
+    <a class="list-group-item {% if '/edit_profile/' in request.path %}active{% endif %}" href="{% url 'edit_profile' %}"> Edit Profile </a>
+
+    <a class="list-group-item {% if '/change_password/' in request.path %}active{% endif %}" href="{% url 'change_password' %}"> Change Password </a>
+
+    {% if request.user.group.name == 'Seller' %}
+    <a class="list-group-item {% if '/add_product/' in request.path %}active{% endif %}" href="{% url 'add_product' %}"> Add Product </a>
+
+    <a class="list-group-item {% if '/my_store/' in request.path %}active{% endif %}" href="{% url 'my_store' request.user.username %}"> My Store </a>
+
+    <a class="list-group-item {% if '/my_store_order/' in request.path %}active{% endif %}" href="{% url 'my_store_order' %}"> My Store Order </a>
+    {% endif %}
+
+    {% if request.user.is_admin %}
+    <a class="list-group-item {% if '/list/' in request.path %}active{% endif %}" href="{% url 'customer:list' user_id %}"> Friend List </a>
+    {% endif %}
+
+  </ul>
+  <br>
+  <!-- <a class="btn btn-light btn-block" href="#"> <i class="fa fa-power-off"></i> <span class="text">Log out</span> </a> -->
+  <!--   SIDEBAR .//END   -->
+</aside>

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% if country == 'invalid' %}
+	<script>
+		window.location.href = '{% url "logout" %}';
+	</script>
+{% else %}
+<section class="section-content bglocal footer-height">
+<p>&nbsp;</p>
+	<div class="card mx-auto" style="max-width:400px;">
+    <article class="card-body">
+		<h2 class="text-center">Register</h2>
+		<p class="text-muted">Create your account. It's free and only takes a minute.</p>
+		<hr>
+		<form action="{% url 'register' %}" method="POST" class="form-register">
+		{% csrf_token %}
+			 {% for field in form %}
+			 {% for error in field.errors %}
+				<div class="alert alert-danger" role="alert">
+					{{ error }}
+				</div>
+				{% endfor %}
+				{% endfor %}
+				{% for error in form.non_field_errors %}
+				<div class="alert alert-danger" role="alert">
+					{{ error }}
+				</div>
+				{% endfor %}
+				{% include 'includes/alerts.html' %}
+				<div class="form-row">
+					<div class="col form-group">
+						<label>First name</label>
+					  	{{form.first_name}}
+					</div>
+					<div class="col form-group">
+						<label>Last name</label>
+					  	{{form.last_name}}
+					</div>
+				</div>
+
+				<div class="form-row">
+					<div class="form-group col-md-6">
+					  <label>Email</label>
+					  {{form.email}}
+					</div>
+					<div class="form-group col-md-6">
+					  <label>Phone number</label>
+					  {{form.phone}}
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label>Create password</label>
+					    {{form.password}}
+							<i class="far fa-eye" id="togglePassword" style="cursor: pointer;position: relative;top: -29px;float: right;margin-right: 10px;"></i>
+					</div>
+					<div class="form-group col-md-6">
+						<label>Repeat password</label>
+					    {{form.confirm_password}}
+							<i class="far fa-eye" id="togglePassword2"  style="cursor: pointer;position: relative;top: -29px;float: right;margin-right: 10px;"></i>
+							<input name="country" type="hidden" value="{{country}}">
+					</div>
+					<small class="text-warning pb-3">* password must contain at least 6 characters, 1 digit, uppercase, lowercase and symbol.</small>
+				</div>
+			    <div class="form-group">
+			        <button type="submit" class="btn btn-success btn-lg btn-block pb-3"> Register Now </button>
+			    </div>
+			</form>
+		</article>
+    </div>
+		<div class="text-center mt-4">Already have an account? <a class="text-white" href="{% url 'login' %}">Sign in here</a></div>
+    <br><br>
+<script>$(function(){reg()})</script>
+</section>
+{% endif %}
+{% endblock %}

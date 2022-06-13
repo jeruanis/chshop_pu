@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load currency %}
+{% load humanize %}
+{% block content %}
+<section class="section-content py-3 bg footer-height">
+  <div class="container">
+  	{% include 'includes/alerts.html' %}
+    <!-- ============================ COMPONENT 1 ================================= -->
+  <form action="{% url 'place_order' %}" method="POST">
+      {% csrf_token %}
+
+    <div class="row">
+
+      <aside class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title mb-4">Check Billing Address</h4>
+
+              <div class="form-row">
+                <div class="col form-group">
+                  <label for="">*First Name</label>
+                  {{form.first_name}}
+                </div>
+                <div class="col form-group">
+                  <label for="">*Last Name</label>
+                  {{form.last_name}}
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col form-group">
+                  <label for="">*Email</label>
+                  {{form.email}}
+                </div>
+                <div class="col form-group">
+                  <label for="">*Phone Number</label>
+                  {{form.phone}}
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col form-group">
+                  <label for="">*Address Line 1</label>
+                  {{form.address_line_1}}
+                </div>
+                <div class="col form-group">
+                  <label for="">Address Line 2</label>
+                  {{form.address_line_2}}
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col form-group">
+                  <label for="">*City</label>
+                  {{form.city}}
+                </div>
+                <div class="col form-group">
+                  <label for="">*State</label>
+                  {{form.state}}
+                </div>
+                <div class="col form-group">
+                  <label for="">*Country</label>
+                  {{form.country}}
+                </div>
+
+                <div class="col form-group">
+                  <label for="">*ZIP Code</label>
+                  {{form.zip}}
+                  <!-- must include in the form list -->
+                  <input type="hidden" name="currency" value="{{currency}}">
+                  <input type="hidden" name="item_count" value="{{cart_count}}">
+                </div>
+
+              </div>
+              <div class="form-row">
+                <div class="col form-group">
+                  <label for="">Order Note</label>
+                  <textarea name="order_note" cols="30" rows="2" class="form-control"></textarea>
+                </div>
+              </div>
+
+          </div>
+        </div> <!-- card.// -->
+
+      </aside> <!-- col.// -->
+
+      <aside class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-borderless table-shopping-cart">
+              <thead class="text-muted">
+                <tr class="small text-uppercase">
+                  <th scope="col">Product</th>
+                  <th scope="col" width="120">Quantity</th>
+                  <th scope="col" width="120">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                {% for cart_item in cart_items %}
+                <tr>
+                  <td>
+                    <figure class="itemside align-items-center">
+                      <div class="aside"><a href="{{cart_item.product.get_url}}"><img src="{{cart_item.product.images.url}}" class="img-sm"></a></div>
+                      <figcaption class="info">
+                        <a href="{{cart_item.product.get_url}}" class="title text-dark">{{cart_item.product.product_name}}</a>
+                        <p class="text-muted small">
+                          {% if cart_item.variations.all %}
+                          {% for item in cart_item.variations.all %}
+                          {{item.variation_category | capfirst}} :{{item.variation_value}} <br>
+                          {% endfor %}
+                          {% endif %}
+                        </p>
+                      </figcaption>
+                    </figure>
+                  </td>
+                  <td>
+                    <label for="">{{cart_item.quantity}}</label>
+                  </td>
+                  <td>
+                    <div class="price-wrap">
+                      <var class="price text-primary">{{symbol}}{{ cart_item.sub_total|currency:currency | intcomma }}</var>
+                      <small class="text-muted">{{symbol}}{{ cart_item.product.price|currency:currency }} each </small>
+                    </div> <!-- price-wrap .// -->
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <div class="card">
+            <div class="card-body">
+                <dl class="dlist-align">
+                  <dt>Total price:</dt>
+                  <dd class="text-right text-primary">{{symbol}}{{ total|currency:currency | intcomma }}</dd>
+                </dl>
+                <!-- <dl class="dlist-align">
+                  <dt>Tax:</dt>
+                  <dd class="text-right text-primary">{{symbol}}{{tax|currency:currency | intcomma }}</dd>
+                </dl> -->
+                <dl class="dlist-align">
+                  <dt>Shipping:</dt>
+                  <dd class="text-right text-primary">{{symbol}}{{shipping_cost|currency:currency | intcomma }}</dd>
+                </dl>
+                <dl class="dlist-align">
+                  <dt><b>Grand Total:</b></dt>
+                  {% load humanize %}
+                  <dd class="text-right text-warning b"><strong>{{symbol}}{{grand_total|currency:currency | intcomma }}</strong></dd>
+                </dl>
+              </div>
+              </div>
+              <hr>
+
+
+            <button type="submit" name="submit" class="btn btn-primary btn-block"> Place Order </button>
+            <a href="{% url 'store' %}" class="btn btn-block btn-outline-warning">Continue Shopping</a>
+          </div> <!-- card-body.// -->
+        </div> <!-- card.// -->
+
+      </aside> <!-- col.// -->
+    </div> <!-- row.// -->
+
+
+    </form>
+    <!-- ============================ COMPONENT 1 END .// ================================= -->
+  </div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}

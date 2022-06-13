@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<section class="section-conten bglocal footer-height">
+	{% if request.user.is_authenticated %}
+		<script>
+			window.location.href = '{% url "home" %}';
+		</script>
+	{% endif %}
+	{% if request.GET.command == 'verification' %}
+	<p>&nbsp;</p>
+		<div class="container mx-auto alert alert-info text-center" role="alert" style="max-width: 1074px;">
+			{% include 'includes/alerts.html' %}<br><br>
+		</div>
+	{% elif request.GET.command == 'pwdvalidation' %}
+		<p>&nbsp;</p>
+		<div class="container mx-auto alert alert-info text-center" role="alert" style="max-width: 1074px;">
+			Password reset email has been sent to your email address.[{{request.GET.email}}]. Please click the link to reset your password.<br><br>
+		</div>
+	{% else %}
+ <p>&nbsp;</p>
+	<div class="card mx-auto" style="max-width: 400px;">
+      <article class="card-body">
+			<h2 class="text-center">Sign in</h2>
+			<hr>
+      {% include 'includes/alerts.html' %}
+      <form action="{% url 'login' %}" method="POST" class="form-register">
+        {% csrf_token %}
+          <div class="form-group">
+			        {{form.email}}
+          </div>
+          <div class="form-group">
+		  	      {{form.password}}
+							<i class="far fa-eye" id="togglePassword"  style="cursor: pointer;position: relative;top: -29px;float: right;margin-right: 10px;"></i>
+          </div>
+          <div class="form-group">
+          	<a href="{% url 'forgotPassword' %}" class="float-right">Forgot password?</a>
+          </div>
+          <div class="form-group">
+              <button type="submit" class="btn btn-success btn-lg btn-block" id="login_button"> Login  </button>
+          </div>
+      </form>
+      </article>
+    </div>
+  {% endif %}
+     <p class="text-center mt-4">Don't have account? <a class="text-white "href="{% url 'register' %}" >Sign up here</a></p>
+     <br><br>
+</section>
+<script>
+	$(function(){log()})</script>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% load static %}
+{% if request.get_full_path != '/accounts/register/' and request.get_full_path != '/accounts/login/' and request.path != '/chatapp/' and request.get_full_path != '/store/contact/' %}
+	<footer class="section-footer border-top col-12 py-3" style="background:#ccc">
+			<section class="footer-grid">
+				<div class="item-footer text-center">
+					<span class="text-muted"> &copy 2021 JV Store </span>
+				</div>
+				<div class="item-footer text-center">
+					<span class="text-muted">Makati City, Philippines 1230</span>
+				</div>
+				<div class="item-footer text-center text-muted">
+					<i class="fa fa-lg fa-cc-visa"></i>
+					<i class="fa fa-lg fa-cc-paypal"></i>
+					<i class="fa fa-lg fa-cc-mastercard"></i>
+				</div>
+			</section>
+	</footer>
+{% endif %}
+</div>
+</body>
+</html>

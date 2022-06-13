@@ -1,0 +1,35 @@
+
+<p class="d-none" id="id_general_page_number">1</p>
+<p class="d-none" id="id_general_oldest_timestamp"></p>
+<p class="d-none" id="id_general_newest_timestamp"></p>
+<p class="d-none" id="id_chat_newest_timestamp"></p>
+<p class="d-none" id="id_chat_page_number">1</p>
+
+<script>
+	const setupChatDropdownHeader = function(){
+			let notificationContainer = document.getElementById("id_chat_notifications_container")
+			if(notificationContainer != null){
+				let div = document.createElement("div")
+				div.classList.add("chat-dropdown-header", "d-flex", "flex-row", "justify-content-center", "m-auto", "align-items-end")
+				div.style.cursor = 'pointer'
+				div.onmouseover=function(){this.style.color = 'green'}
+				div.onmouseout=function(){this.style.color = '#4b5056'}
+				div.onmouseover=function(){this.classList.add('b')}
+				div.onmouseout=function(){this.classList.remove('b')}
+				div.addEventListener("click", function(){
+					var url = "{% url 'private_chat_room_customer' %}"
+					chatRedirect(url)
+				})
+				span1 = document.createElement("span")
+				span1.classList.add("mr-2", "text-center")
+				span1.innerHTML = "All messages"
+				div.appendChild(span1)
+
+				span2 = document.createElement("span")
+				span2.classList.add("mr-2", "fa", "fa", "fa-comments")
+	      span2.style.fontSize ='24px'
+				div.appendChild(span2)
+				notificationContainer.appendChild(div)
+			}
+		}
+</script>

@@ -1,0 +1,242 @@
+<!-- This is basically exactly the same as friend_list.html -->
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<style type="text/css">
+	.profile-image{
+		max-height: 100px;
+		max-width: 100px;
+	}
+	.profile-image{
+		border-radius: 12px;
+	}
+	.card{
+		border-radius: 12px;
+	}
+	.friends-text{
+		color: #000;
+		font-weight: 500;
+	}
+	.friends-text-container{
+		border: 1px solid #cccccc;
+		border-radius: 12px;
+	}
+	.friends-btn:hover {
+		background-color: #bfbfbf;
+		border-color: #bfbfbf;
+	}
+	.dropdown-toggle::after {
+		content: none;
+	}
+	.profile-link{
+		color: #000;
+	}
+	.checkmark-icon{
+		color: green;
+	}
+	.cancel-icon{
+		color: red;
+	}
+
+/* header starts */
+
+
+.chat-dropdown-header:hover{
+  cursor: pointer;
+  background: var(--main-background-color);
+}
+.chat-dropdown-header{
+  color: var(--light-primary-text-color);
+}
+.scrollable-menu {
+  height: auto;
+  max-height: 90vh;
+  width: 500px;
+  overflow-x: hidden;
+}
+
+.notifications-material-icon {
+  font-size: 28px;
+
+}
+.notifications-icon-container{
+  width: 40px;
+  height: 40px;
+  background-color: var(--main-background-color);
+}
+.notifications-icon-container:hover {
+  cursor: pointer;
+  background-color: var(--secondary-text-color)
+}
+.notify-badge{
+  position: absolute;
+  background: transparent;
+  height:1.2rem;
+  width:1.2rem;
+  line-height: 1.2rem;
+  top:1rem;
+  right:2rem;
+  text-align: center;
+  font-size: 1rem;
+  border-radius: 50%;
+  color:white;
+  font-weight: 630;
+  margin-top:-15px;
+  margin-right: -25px;
+}
+#id_notifications_spinner{
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+</style>
+
+<div class="d-flex flex-column flex-lg-row p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+
+	<!-- MEDIUM+ SCREENS -->
+	<div class="d-none d-md-flex flex-row my-auto flex-grow-1 align-items-center">
+		<h5 class="mr-3 font-weight-normal justify-content-start">
+			<a class="p-2 text-dark" href="#">Search Customer</a>
+		</h5>
+		<form class="search-bar justify-content-start" onsubmit="return executeQuery();">
+			<input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search...">
+		</form>
+
+		<div class="d-flex flex-row-reverse flex-grow-1">
+			<nav class="">
+				{% if request.user.is_authenticated %}
+					<div class="dropdown dropleft show p-2">
+						<div class="d-flex flex-row">
+
+						</div>
+					</div>
+				{% else %}
+					<a class="p-2 text-dark" href="{% url 'login' %}">Login</a>
+					<a class="btn btn-outline-primary" href="{% url 'register' %}">Register</a>
+				{% endif %}
+			</nav>
+		</div>
+	</div>
+	<!-- END MEDIUM+ SCREENS -->
+
+	<!-- SMALL SCREENS -->
+	<div class="d-flex d-md-none flex-column my-auto align-items-center">
+		<h5 class="font-weight-normal">
+			<a class="p-2 text-dark" href="#">Search Customer</a>
+		</h5>
+		<form class="search-bar justify-content-start" onsubmit="return executeQuery();">
+			<input type="text" class="form-control" name="q" id="id_q_small" placeholder="Search...">
+		</form>
+		<div class="d-flex flex-row-reverse flex-grow-1">
+			<nav class="">
+				{% if request.user.is_authenticated %}
+				<div class="dropdown dropleft p-2 mt-2">
+					<div class="d-flex flex-row">
+						<div class="btn-group dropleft">
+							<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{request.user.profile_image.url}}" alt="codingwithmitch logo" width="40" height="40">
+							<div class="dropdown-menu" aria-labelledby="id_profile_links">
+								<a class="dropdown-item" href="{% url 'view' request.user.id %}">Account</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% else %}
+					<a class="p-2 text-dark" href="{% url 'login' %}">Login</a>
+					<a class="btn btn-outline-primary m-2" href="{% url 'register' %}">Register</a>
+				{% endif %}
+			</nav>
+	  	</div>
+	</div>
+	<!-- END header-->
+</div>
+
+
+
+<div class="container">
+	<div class="card p-2">
+
+		{% if accounts %}
+		<div class="d-flex flex-row flex-wrap">
+		{% for account in accounts %}
+		<div class="card flex-row flex-grow-1 p-2 mx-2 my-2 align-items-center">
+			<a class="profile-link" href="{% url 'view' user_id=account.0.id %}">
+				<div class="card-image m-2">
+					<img class="img-fluid profile-image" src="{{account.0.profile_image.url}}" alt="">
+				</div>
+			</a>
+			<a class="profile-link" href="{% url 'view' user_id=account.0.id %}">
+				<div class="card-center px-2">
+					<h4 class="card-title">{{account.0.username}}</h4>
+					{% if account.1 %}
+					<p class="card-text"><a href="#" onclick="createOrReturnPrivateChat('{{account.0.id}}')">Send a Message</a></p>
+					{% endif %}
+
+				</div>
+			</a>
+			<div class="d-flex flex-row card-right flex-grow-1 justify-content-end mx-2">
+				{% if account.1 %}
+					<div class="d-flex flex-row friends-text-container p-3">
+						<p class="friends-text m-auto">
+							Friends
+						</p>
+						<span class="material-icons checkmark-icon m-auto pl-2">
+						check_circle_outline
+						</span>
+					</div>
+				{% else %}
+					{% if account.0 !=  request.user %}
+						<div class="d-flex flex-row friends-text-container p-3">
+							<p class="friends-text m-auto">
+								Not Friends
+							</p>
+							<span class="material-icons cancel-icon m-auto pl-2">cancel</span>
+						</div>
+					{% endif %}
+				{% endif %}
+				{% if account.0 == request.user %}
+					<div class="d-flex flex-row friends-text-container p-3">
+						<p class="friends-text m-auto">
+							This is you
+						</p>
+						<span class="material-icons m-auto pl-2">
+						person_pin
+						</span>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+		{% if forloop.counter|divisibleby:2 %}
+		</div><div class="d-flex flex-row flex-wrap">
+		{% endif %}
+
+		{% endfor %}
+
+		{% else %} <!-- If no friends -->
+		<div class="d-flex flex-row flex-grow-1 justify-content-center align-items-center p-4">
+			<p>No results</p>
+		</div>
+		{% endif %}
+		</div>
+	</div>
+
+</div>
+
+
+{%  include 'chatapp/create_or_return_private_chat.html' %}
+
+<script>
+  function executeQuery() {
+    var query = ""
+    query = document.getElementById('id_q_small').value;
+    if (query == ""){
+      query = document.getElementById('id_q_large').value;
+    }
+      window.location.replace("{% url 'customer:customer_search' %}?q=" + query)
+      return false
+      }
+</script>
+
+{% endblock content %}

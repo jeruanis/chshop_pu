@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content py-3 bg footer-height">
+
+	<div class="px-3">
+		{% include 'includes/alerts.html' %}
+		{% for field in form %}
+		{% for error in field.errors %}
+		<div class="alert alert-primary" role="alert">
+			{{ error }}
+		</div>
+		{% endfor %}
+		{% endfor %}
+		{% if error_view %}
+		<div class="alert alert-primary" role="alert">
+			{{ error_view }}
+		</div>
+		{% endif %}
+		<div class="row">
+
+			{% include 'includes/dashboard_sidebar.html' %}
+
+			<main class="col-md-10 footer-height">
+				<article class="card">
+					<div class="card-body">
+						<div class="row gutters-sm">
+							<div class="col-md-4 mb-3">
+								<div class="card">
+									<div class="card-body">
+										<div class="d-flex flex-column align-items-center text-center">
+											<img src="{{request.user.profile_pic.url}}" alt="Profile Picture" class="img-md icon rounded-circle">
+											<div class="mt-3">
+												<p class="b mb-1">{{request.user.username}}</p>
+												<p class="text-secondary mb-1">{{request.user.profession | title}}</p>
+												<p class="text-muted font-size-sm">{{request.user.address }}</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-8">
+
+								<!-- friend search starch here -->
+								{% if accounts %}
+								<h5 class="mr-3 font-weight-normal justify-content-start">
+									<a class="pr-2 text-dark" href="#">Search Result</a>
+								</h5>
+
+								<div class="card p-2">
+									<div class="d-flex flex-row flex-wrap">
+										{% for account in accounts %}
+										<div class="card flex-row flex-grow-1 p-2 mx-2 my-2 align-items-center">
+											<a class="profile-link" href="{% url 'view' user_id=account.0.id %}">
+												<div class="card-image m-2">
+													<img class="img-fluid profile-image" src="{{account.0.profile_image.url}}" alt="">
+												</div>
+											</a>
+
+												<div class="card-center px-2">
+													<!-- <a class="profile-link" href="{% url 'view' user_id=account.0.id %}"> -->
+													<a class="profile-link" href="#">
+													  <h5>{{account.0.username}}</h5>
+													</a>
+													{% if account.1 %}
+													<p class="card-text"><a href="#" onclick="createOrReturnPrivateChat('{{account.0.id}}')">Send a Message</a></p>
+													{% endif %}
+												</div>
+
+											<div class="d-flex flex-row card-right flex-grow-1 justify-content-end mx-2">
+												{% if account.1 %}
+												<div class="d-flex flex-row friends-text-container p-3">
+													<p class="friends-text m-auto">
+														Friends
+													</p>
+													<span class="material-icons checkmark-icon m-auto pl-2">
+														check_circle_outline
+													</span>
+												</div>
+												{% else %}
+												{% if account.0 !=  request.user %}
+												<div class="d-flex flex-row friends-text-container p-3">
+													<p class="friends-text m-auto">
+														Not Friends
+													</p>
+													<span class="material-icons cancel-icon m-auto pl-2">cancel</span>
+												</div>
+												{% endif %}
+												{% endif %}
+												{% if account.0 == request.user %}
+												<div class="d-flex flex-row friends-text-container p-3">
+													<p class="friends-text m-auto">
+														This is you
+													</p>
+													<span class="material-icons m-auto pl-2">
+														person_pin
+													</span>
+												</div>
+												{% endif %}
+											</div>
+										</div>
+										{% if forloop.counter|divisibleby:2 %}
+									</div>
+									<div class="d-flex flex-row flex-wrap">
+										{% endif %}
+										{% endfor %}
+									</div>
+								</div>
+
+								<!-- friend list starts here -->
+								{% elif friends %}
+								<div class="d-md-flex flex-row flex-grow-1 align-items-center mb-2">
+									<h5 class="mr-3 font-weight-normal justify-content-start">
+										<a class="pr-2 text-dark" href="#">Search Customer</a>
+									</h5>
+									<form class="search-bar justify-content-start" onsubmit="return executeQuery();">
+										<input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search...">
+									</form>
+								</div>
+
+								<div class="card p-2">
+									<div class="d-flex flex-row flex-wrap">
+										{% for friend in friends %}
+										<div class="card flex-row flex-grow-1 p-2 mx-2 my-2 align-items-center">
+											<a class="profile-link" href="{% url 'view' user_id=friend.0.pk %}">
+												<div class="card-image m-2">
+													<img class="img-fluid profile-image" src="{{friend.0.profile_image.url}}" alt="">
+												</div>
+											</a>
+
+											<div class="card-center px-2">
+												<!-- <a class="profile-link" href="{% url 'view' user_id=friend.0.pk %}"> -->
+												<a class="profile-link" href="#">
+													<h5>{{friend.0.username|truncatechars:50}}</h5>
+												</a>
+												{% if friend.1 %}
+												<a href="#" onclick="createOrReturnPrivateChat('{{friend.0.id}}')">Send a Message</a>
+												{% endif %}
+
+											</div>
+
+											<div class="d-flex flex-row card-right flex-grow-1 justify-content-end mx-2">
+												{% if friend.1 %}
+												<div class="d-flex flex-row friends-text-container p-3">
+													<p class="friends-text m-auto">
+														Friends
+													</p>
+													<span class="material-icons checkmark-icon m-auto pl-2">
+														check_circle_outline
+													</span>
+												</div>
+												{% else %}
+												{% if friend.0 !=  request.user %}
+												<div class="d-flex flex-row friends-text-container p-3">
+													<p class="friends-text m-auto">
+														Not Friends
+													</p>
+													<span class="material-icons cancel-icon m-auto pl-2">cancel</span>
+												</div>
+												{% endif %}
+												{% endif %}
+												{% if friend.0 == request.user %}
+												<div class="d-flex flex-row friends-text-container p-3">
+													<p class="friends-text m-auto">
+														This is you
+													</p>
+													<span class="material-icons m-auto pl-2">
+														person_pin
+													</span>
+												</div>
+												{% endif %}
+											</div>
+										</div>
+										{% if forloop.counter|divisibleby:2 %}
+									</div>
+									<div class="d-flex flex-row flex-wrap">
+										{% endif %}
+
+										{% endfor %}
+
+										{% else %}
+										<!-- If no friends -->
+										<div class="d-flex flex-row flex-grow-1 justify-content-center align-items-center p-4">
+											<p>No friends :(</p>
+										</div>
+									</div>
+
+								</div>
+								{% endif %}
+
+							</div>
+
+
+						</div>
+					</div>
+				</article> <!-- order-group.// -->
+			</main>
+		</div> <!-- row.// -->
+	</div>
+
+
+</section>
+{%  include 'chatapp/create_or_return_private_chat.html' %}
+<!-- ========================= SECTION CONTENT END// ========================= -->
+<script>
+	function executeQuery() {
+		var query = ""
+		if (query == "") {
+			query = document.getElementById('id_q_large').value;
+		}
+		window.location.replace("{% url 'customer:list' request.user.id %}?q=" + query)
+		return false
+	}
+</script>
+
+{% endblock %}

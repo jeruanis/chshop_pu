@@ -1,0 +1,141 @@
+
+{% load static %}
+<div class="container px-0">
+    <section class="border-bottom bg-white" style='min-width: 355px;'>
+  	 <div class="container">
+        <nav class="navbar p-md-0 navbar-expand-sm navbar-light">
+          <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTop4" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTop4">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                  <a href="#" class="nav-link"> <span class="">
+                    <span class="mr-2">Country: {{country}}</span>{% if currency %}Currency: <span>{{currency}}</span>
+                    {% if user.is_authenticated %}{%else%}
+                    <span class="pl-2">(Sign in to change currency)</span>
+                    {% endif %}
+                    {% else%} <span class="text-danger">Sorry we are currently not serving to your country location</span> {% endif %}</span> </a>
+                </li>
+                <li><a  class="nav-link" href="{% url 'services_doc' %}">Other services</a></li>
+                <li><a  class="nav-link" href="{% url 'api_doc' %}">API</a></li>
+              </ul>
+              <ul class="navbar-nav">
+                <li><a href="{% url 'contact' %}" class="nav-link"> <i class="fa fa-envelope"></i> Email </a></li>
+                <li><a href="{% url 'seller_doc' %}" class="nav-link"> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#7f7f7f"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm5-4h2v.4c-.1 2.2-.8 3.9-2.3 5.1-.5.4-1.1.7-1.7.9V22h-2v-6h-2v6H9V10.1c-.3.1-.5.2-.6.3-.9.7-1.39 1.6-1.4 3.1v.5H5v-.5c0-2 .71-3.59 2.11-4.79C8.21 7.81 10 7 12 7s2.68-.46 3.48-1.06C16.48 5.14 17 4 17 2.5V2zM4 16h3v6H4v-6z"/></svg> Be a Seller </a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <section class="">
+          <div class="nav-container">
+              <div class="logo nav-items">
+                <div class="d-flex justify-content-start">
+                <a href="{% url 'home' %}" class="brand-wrap">
+                  <img class="logo" src="{% static './images/logo.png' %}">
+                </a>
+                </div>
+              </div>
+              <div class="categories nav-items">
+                <div class="d-flex justify-content-end">
+                  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-bars"></i> All category
+                  </button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'store' %}">All Products</a>
+                    {% for category in links %}
+                    <a class="dropdown-item" href="{{category.get_url}}">{{category.category_name}}</a>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+              <div class="search nav-items">
+                <div class="d-flex justify-content-end">
+                  <form action="{% url 'search' %}" class="w-100" method='GET'>
+                    <div class="input-group w-100">
+                      <div class="border-right pl-2 pr-2 pt-2 d-inline-block b bg-info btn" name="category_name" style="border-top-right-radius: 0;border-bottom-right-radius: 0;">
+                        <a href="{% url 'store' %}" class="text-white"> Store </a>
+                      </div>
+                      <input type="text" class="form-control border-info" onkeyup="getLiveSearch(this.value, '{% url 'liveSearch' %}')" placeholder="Search Store" name='keyword'>
+                      <div class="input-group-append">
+                        <button class="btn btn-info" style="margin-left:2px" type="submit">
+                          <i class="fa fa-search"></i> Search
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div class="welcome nav-items">
+                <div class="nav-container">
+                {% if user.id is None %}
+                  <div class="nav-container justify-content-start">
+                    <div class="widget-header" style="width:186px;">
+                      <small class="title text-muted d-block">Welcome guest!</small>
+                      <div class="d-inline-block">
+                        <a href="{% url 'login' %}">Sign in</a> <span class="dark-transp"> | </span>
+                        <a href="{% url 'register' %}"> Register</a>
+                      </div>
+                    </div>
+                  </div>
+                {% elif user.is_admin %}
+                  <div class="nav-container justify-content-start">
+                    <div class="widget-header">
+                      <small class="title text-muted">Welcome Admin {{user.first_name | title}}</small>
+                      <div class="d-inline-block">
+                        <a href="{% url 'dashboard' %}">Dashboard</a> <span class="dark-transp"> | </span>
+                        <a href="{% url 'logout' %}"> <i class="fa fa-sign-out" title="logout">{{logout}}</i> </a>
+                      </div>
+                    </div>
+                  </div>
+                  {% else %}
+                  <div class="nav-container justify-content-start">
+                   <div class="widget-header">
+                    <small class="title text-muted">Welcome {{user.first_name | title}}</small>
+                    <div class="d-inline-block">
+                      <a href="{% url 'dashboard' %}">Dashboard</a> <span class="dark-transp"> | </span>
+                      <a href="{% url 'logout' %}"> <i class="fa fa-sign-out" title="logout"></i>{{logout}}</a>
+                    </div>
+                    </div>
+                  </div>
+                  {% endif %}
+                {% if user.is_authenticated %}
+                <div class="nav-container justify-content-end nav-items">
+                <div class="btn-group dropleft">
+                  <div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3" id="id_chat_notification_dropdown_toggle" data-toggle="dropdown">
+                    <div class="widget-header"  style="cursor:pointer;">
+                    <div class="icon-area rounded-circle" style="padding: 22px;padding-bottom:0;">
+                      <svg style="position: absolute;margin-bottom: -50%;margin-right: -50%;transform: translate(-50%, -50%);" xmlns="http://www.w3.org/2000/svg" height="36px" viewBox="0 0 24 24" width="36px" fill="#fa3434"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                      <span id="id_chat_notifications_count" class="notify" style="right:20px;background:#fa3434;"></span>
+                    </div>
+                    <small class="text text-center" style="color:#555">Notification </small>
+                    </div>
+                  </div>
+                 <div class="dropdown-menu scrollable-menu" id="id_chat_notifications_container" style="width:203px"></div>
+               </div>
+              {% endif %}
+              <div class="btn-group dropleft">
+  							<div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3">
+                  <a href="{% url 'cart' %}">
+                    <div class="widget-header">
+                      <div class="icon-area rounded-circle" style="padding: 22px;/*background: #f2f2f2;*/padding-bottom:0;">
+                        <i class="fa fa-shopping-cart text-warning" aria-hidden="true" style="position: absolute;margin-bottom: -50%;margin-right: -50%;transform: translate(-50%, -50%);"></i>
+                        <span class="notify">{{cart_count}}</span>
+                      </div>
+                      <small class="text text-center text-secondary"> Cart </small>
+    									<div class="dropdown-menu scrollable-menu" aria-labelledby="id_notification_dropdown_toggle" id="id_general_notifications_container">
+    									</div>
+  								 </div>
+                  </a>
+							  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+       </div>
+      </section>
+      </div>
+    </section>
+{% include 'includes/notifications/notification_connect.html' %}
+<div id="search_result"></div>

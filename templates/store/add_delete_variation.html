@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<section class="section-content py-3 bg footer-height" id="add_main">
+	{% include 'includes/alerts.html' %}
+	<div class="row">
+	<main class="col-md-12">
+		<article class="card">
+		<div class="card-body">
+   <form action="{% url 'prodVariation' prod_id %}" method="POST">
+     {% csrf_token %}
+      <div class="row gutters-sm">
+					 {% include 'includes/dashboard_sidebar.html' %}
+							 <div class="col-md-10 mb-3">
+								 <div class="card">
+									 <div class="card-body">
+                     <h5 class="d-inline-block">Add Variation:</h5>
+                      <hr>
+ 	                  <div class="row">
+ 	                    <div class="col-sm-4">
+ 	                      <h6 class="mb-0">Product</h6>
+ 	                    </div>
+ 	                    <div class="col-sm-8 text-secondary">
+												<input type="text" name="product" value="{{product}}" id="id_product">
+ 	                    </div>
+ 	                  </div>
+ 										<hr>
+                    <div class="row">
+ 	                    <div class="col-sm-4">
+ 	                      <h6 class="mb-0">variation_category</h6>
+ 	                    </div>
+ 	                    <div class="col-sm-8 text-secondary">
+												{{form.variation_category}}
+ 	                    </div>
+ 	                  </div>
+ 										<hr>
+                    <div class="row mb-2">
+ 	                    <div class="col-sm-4">
+ 	                      <h6 class="mb-0">variation_value</h6>
+ 	                    </div>
+ 	                    <div class="col-sm-8 text-secondary">
+												{{form.variation_value}}
+ 	                    </div>
+ 	                  </div>
+
+ 	                  <div class="form-group">
+ 	        			        <button type="submit" class="btn btn-warning btn-block col-md-4 float-right" id="apply_changes"> Add </button>
+ 	        			    </div>
+									 </div>
+								 </div>
+							 </div>
+						 </div>
+					 </form>
+
+				   <form action="{% url 'prodVariation' prod_id %}" method="POST">
+				     {% csrf_token %}
+				      <div class="row gutters-sm">
+								<aside class="col-md-2">
+									<!-- dummy tag -->
+								 </aside>
+				              <div class="col-md-10 mb-3">
+				                <div class="card">
+				                  <div class="card-body">
+				                     <h5 class="d-inline-block">Delete Variation:</h5>
+				                      <hr>
+				                     <div class="row">
+				                       <div class="col-sm-4">
+				                         <h6 class="mb-0">Product Name:</h6>
+				                         <input type="text" id="id_products" name="product" value="{{product}}">
+				                       </div>
+				                       <div class="col-sm-8 text-secondary">
+				                         {% if product.variation_set.colors %}
+				                         <h6>Select Color</h6>
+				                         <select name="color" class="form-control">
+				                          <option value="" diabled selected>select</option>
+				                            {% for i in product.variation_set.colors %}
+				                              <option value="{{i.variation_value}}">{{i.variation_value | capfirst}}</option>
+				                            {% endfor %}
+				                          </select>
+				                         {% endif %}
+				                         <br>
+				                         {% if product.variation_set.sizes %}
+				                         <h6>Select Size</h6>
+				                         <select name="size" class="form-control">
+				                          <option value="" diabled selected>select</option>
+				                            {% for i in product.variation_set.sizes %}
+				                              <option value="{{i.variation_value}}">{{i.variation_value | capfirst}}</option>
+				                            {% endfor %}
+				                          </select>
+				                         {% endif %}
+				                       </div>
+				                     </div>
+				                     <hr>
+
+				                     <div class="form-group">
+				                         <button type="submit" class="btn btn-danger btn-block col-md-4 float-right" id="apply_changes"> Delete </button>
+				                     </div>
+				                  </div>
+				                </div>
+				              </div>
+				          </div>
+				   </form>
+
+	   <div class="text-secondary text-center">
+	     <h6>Variation List</h6>
+	     {% if product.variation_set.colors %}
+	     <h6>Avialable Color{% if product.variation_set.colors.count > 1 %}{{ product.variation_set.colors | pluralize:'s'}} {% endif %}</h6>
+	        {% for i in product.variation_set.colors %}
+	          ({{ i.variation_value | capfirst }})
+	        {% endfor %}
+	     {% endif %}
+	     <br>
+	     {% if product.variation_set.sizes %}
+	     <h6>Available Size{% if product.variation_set.sizes.count > 1 %}{{ product.variation_set.sizes | pluralize:'s'}} {% endif %}</h6>
+	        {% for i in product.variation_set.sizes %}
+	          ({{i.variation_value | capfirst}})
+	        {% endfor %}
+	     {% endif %}
+	   </div>
+
+		</div>
+		</article>
+	</main>
+</div>
+
+</section>
+<script>
+	$(document).ready(function(){
+		add_gotoMain();
+	});
+</script>
+{% endblock %}

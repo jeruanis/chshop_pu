@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load currency %}
+{% load humanize %}
+{% block content %}
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content py-3 bg footer-height">
+
+	{% include 'includes/alerts.html' %}
+	<div class="row">
+
+	{% include 'includes/dashboard_sidebar.html' %}
+
+	<main class="col-md-10">
+		<article class="card">
+			<div class="head-container">
+				<div class="items">Total: {{count}} Item{{count | pluralize}} deleted and/or cancelled</div>
+				<div class="items">Cancelled: {{cancel}}</div>
+
+			</div>
+		<div class="card-body overflow-auto">
+			{% if not count %}
+			<h3 class="text-center">You do not have Cancelled and Deleted Items.</h3>
+			<br>
+			<div class="text-center">
+				<a href="{% url 'store' %}" class="btn btn-warning">Check the Store for Items that you might like.</a>
+			</div>
+			{% else %}
+				<table class="table table-md">
+					<thead>
+						<tr>
+							<th scope="col">Product</th>
+							<th scope="col">Total Price</th>
+							<th scope="col">Ordered</th>
+							<th scope="col">Status</th>
+							{% if user.is_admin %}
+								<th scope="col">Action</th>
+							{% endif %}
+						</tr>
+					</thead>
+					<tbody>
+						{% for order in orderproducts %}
+						 <tr id="trcom{{order.id}}">
+							 <td><a href="{% url 'order_detail' order.order.order_number %}">{{ order.payment}}</a>
+								 <span class="d-block">{{ order.product.product_name}} <small class="ml-2 text-muted">{% for i in order.variation.all %} {{ i }} {% endfor %}</small></span>
+								 <span class="d-block">{{order.user}}</span>
+							 </td>
+							 <td class="text-success b"> <span class="pr-1">{{order.order.currency}}</span> {{ order.total_price |currency:order.order.currency | intcomma }}</td>
+							 <td>{{ order.date_updated}}</td>
+							 <td>{{ order.status }}</td>
+
+							 {% if user.is_admin %}
+								 {% if order.status == 'Cancelled' %}
+									 <td>
+										 <form action="{% url 'update_status_cancel' order.order.order_number %}?ops={{order.product.slug}}" method="POST">
+											 {% csrf_token %}
+													<input type="hidden" name="cancel" value="cancelled">
+													<button type="submit" class="btn btn-sm btn-info">Update</button>
+										</td>
+									{% elif order.status == 'PAID' or order.status == 'Done Refund' %}
+										<form id="delcom{{order.id}}">
+												<td>
+													<input type="hidden" name="delo" value="delete_com">
+													<button type="submit" style="outline-width: 0px !important"  class="btn btn-sm btn-danger" title="Delete this item?" id="subcom{{order.id}}">Delete item</button>
+												</td>
+										 </form>
+										 <script type="text/javascript">
+											$(function(){
+												$('#delcom{{order.id}}').on('submit', function(event){
+													var formData = new FormData($('#delcom{{order.id}}')[0]);
+													formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+													formData.append('ops', '{{order.product.slug}}');
+													formData.append('order_id', '{{order.id}}');
+													$.ajax({
+														type: "POST",
+														url: "{% url 'deleteOrder' order.order.order_number %}",
+														data:formData,
+														cache: false,
+														contentType: false,
+														processData: false,
+														beforeSend:function(){
+															$('#delcom{{order.id}}').css("opacity", "0.3");
+														},
+														success:function(data, textStatus){
+															$("#trcom{{order.id}}").fadeOut();
+														}
+													});
+													 event.preventDefault();
+												});
+											});
+
+										 </script>
+								 {% endif %}
+								{% endif%}
+						 </tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% endif %}
+		</div>
+
+		</article>
+	</main>
+</div>
+
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}

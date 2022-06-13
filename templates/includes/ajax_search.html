@@ -1,0 +1,31 @@
+
+{% load static %}
+{% load currency %}
+{% load humanize %}
+{% block content %}
+{% if products %}
+<div class="row p-1">
+  {% for product in products %}
+    <div class="d-flex justify-content-between flex-wrap">
+    <figure class="card card-product-grid product-grid-max-height figure p-1 m-1">
+      <figcaption class="img-wrap" style="width:160px">
+        <a href="{{product.get_url}}"><img src="{{product.images.url}}"></a>
+      </figcaption>
+      <figcaption class="img-wrap" style="width:160px; height:111px;">
+        <div class="fix-height" style="max-width:215px;margin:0 auto;height:115px;">
+          <a href="{{product.get_url}}" class="title d-inline-block price-note w-100 px-2"><p style="text-align:left">{{product.product_name | truncatechars:16 | capfirst}}</p>
+          <div class="d-flex justify-content-between">
+            {% if not product.is_digital %}{% if product.stock %}<span style="color:#c1c1c1"><small>stock : {{product.stock}}</small></span>{% endif %}{% endif %}
+            {% if product.sold %}<span class="float-right" style="color:#c1c1c1"><small>sold: {{product.sold}}</small></span>{% endif %}
+          </div>
+          </a>
+        </div>
+      </figcaption>
+    </figure>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="lead textx-center">No Result Found</div>
+{% endif %}
+{% endblock %}
