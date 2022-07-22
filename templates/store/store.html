@@ -22,25 +22,7 @@
 {% if currency == 'PHP' %}
 <aside class="col-md-3">
 		<div class="card">
-			<article class="filter-group store-cat">
-				<header class="card-header">
-					<a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="false">
-						<i class="icon-control fa fa-chevron-down"></i>
-						<h6 class="title">Categories</h6>
-					</a>
-				</header>
-				<div class="filter-content collapse" id="collapse_1" style="">
-					<div class="card-body bg-white">
 
-						<ul class="list-menu">
-							<li><a href="{% url 'store' %}">All Products</a></li>
-							{% for category in links %}
-								<li><a href="{{category.get_url}}">{{category.category_name}}</a></li>
-							{% endfor %}
-						</ul>
-					</div>
-				</div>
-			</article>
 			<article class="filter-group">
 				<header class="card-header">
 					<a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
@@ -67,14 +49,36 @@
 					</div>
 				</form>
 			</article>
+
+			<article class="filter-group">
+				<header class="card-header">
+					<a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="false">
+						<i class="icon-control fa fa-chevron-down"></i>
+						<h6 class="title">Categories</h6>
+					</a>
+				</header>
+				<!-- <div class="filter-content collapse" id="collapse_1" style=""> -->
+				<div class="filter-content" id="collapse_1" style="">
+					<div class="card-body bg-white pt-0">
+
+						<ul class="list-menu">
+							<li><a href="{% url 'store' %}">All Products</a></li>
+							{% for category in links %}
+								<li><a href="{{category.get_url}}">{{category.category_name}}</a></li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</article>
+
 		</div>
 	</aside>
-  <main class="col-md-9">
+  <article class="col-md-9">
  {% else %}
-  <main class="col-md-12">
+  <article class="col-md-12">
  {% endif %}
    {% include 'includes/products_call.html' %}
-	</main>
+	</article>
 </div>
 </div>
 </section>

@@ -1,10 +1,10 @@
 
 {% load static %}
-<div class="container px-0">
-    <section class="border-bottom bg-white" style='min-width: 355px;'>
-  	 <div class="container">
+<!-- <div class="container px-0"> -->
+    <header class="border-bottom bg-white" style='min-width: 355px;'>
+  	 <section class="container">
         <nav class="navbar p-md-0 navbar-expand-sm navbar-light">
-          <div class="container">
+          <article class="container bg-white">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTop4" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
@@ -26,10 +26,10 @@
                 <li><a href="{% url 'seller_doc' %}" class="nav-link"> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#7f7f7f"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm5-4h2v.4c-.1 2.2-.8 3.9-2.3 5.1-.5.4-1.1.7-1.7.9V22h-2v-6h-2v6H9V10.1c-.3.1-.5.2-.6.3-.9.7-1.39 1.6-1.4 3.1v.5H5v-.5c0-2 .71-3.59 2.11-4.79C8.21 7.81 10 7 12 7s2.68-.46 3.48-1.06C16.48 5.14 17 4 17 2.5V2zM4 16h3v6H4v-6z"/></svg> Be a Seller </a></li>
               </ul>
             </div>
-          </div>
+          </article>
         </nav>
-        <section class="">
-          <div class="nav-container">
+        <!-- <section class=""> -->
+          <article class="nav-container bg-white">
               <div class="logo nav-items">
                 <div class="d-flex justify-content-start">
                 <a href="{% url 'home' %}" class="brand-wrap">
@@ -133,9 +133,10 @@
             </div>
           </div>
         </div>
-       </div>
+       </article>
+      <!-- </section> -->
+      <!-- </div> -->
       </section>
-      </div>
-    </section>
+    </header>
 {% include 'includes/notifications/notification_connect.html' %}
 <div id="search_result"></div>

@@ -127,7 +127,7 @@ function appendBottomChatNotification(notification){
 		}
 	}
 
-	function createUnreadChatRoomMessagesElement(notification){
+function createUnreadChatRoomMessagesElement(notification){
 		card = createChatNotificationCard()
 		card.id = assignChatCardId(notification)
 			card.addEventListener("click", function(){

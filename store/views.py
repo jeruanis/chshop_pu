@@ -129,7 +129,7 @@ def prodVariation(request, pk):
         message.warning(request, 'Permission not allowed')
         return redirect('store')
 
-@cache_page(60 * 5)
+# @cache_page(60 * 5)
 def liveSearch(request, *args, **kwargs):
     keyword = request.GET.get('keyword')
     if keyword != '':
@@ -317,7 +317,7 @@ def pagination(request, value):
     return paged_products
 
 
-@cache_page(60 * 5)
+# @cache_page(60 * 5)
 def my_store(request, seller):
     try:
         user = Account.objects.get(username = seller)
@@ -330,7 +330,7 @@ def my_store(request, seller):
         return redirect('store')
 
 
-@cache_page(60 * 5)
+# @cache_page(60 * 5)
 def store(request, category_slug=None):
     if request.user.is_authenticated:
         user = request.user
@@ -392,7 +392,7 @@ def product_detail(request, category_slug, product_slug):
     return render(request, 'store/product_detail.html', context)
 
 
-@cache_page(60 * 5)
+# @cache_page(60 * 5)
 def search(request, *args, **kwargs):
     keyword = request.GET.get('keyword')
     if keyword != '':
@@ -404,7 +404,7 @@ def search(request, *args, **kwargs):
         return redirect('store')
 
 
-@cache_page(60 * 5)
+# @cache_page(60 * 5)
 def price_search(request):
     products = Product.objects.all().filter(is_available = True).order_by('modified_date')
     if 'min' in request.GET or 'max' in request.GET:

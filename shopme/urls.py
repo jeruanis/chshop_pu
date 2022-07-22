@@ -24,12 +24,12 @@ import store
 
 urlpatterns = [
     path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
-    path('passage/', admin.site.urls),
+    path(admin.site.urls),
     path('', views.home, name='home'),
     path('store/', include('store.urls')),
     path('cart/', include('carts.urls')),
     path('accounts/', include('accounts.urls')),
-    # path('accounts/', include('django.contrib.auth.urls')), #nneded for change password
+    # path('accounts/', include('django.contrib.auth.urls')),
     path('orders/', include('orders.urls')),
     path('currencies/', include('currencies.urls')),
     path('chatapp/', include('chatapp.urls')),
@@ -37,11 +37,10 @@ urlpatterns = [
     path('seller/', views.seller_doc, name='seller_doc'),
     path('services/', views.services_doc, name='services_doc'),
     path('api_doc/', views.api_doc, name='api_doc'),
-    # path('error_500_page/', views.CustomExceptionReporter.as_view(), name='error_500_page'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) #for media folder files access
-# #this is the way to assign the error views
+#assign the error views
 handler400 = store.views.error_400
 handler404 = store.views.error_404
 handler500 = store.views.error_500
